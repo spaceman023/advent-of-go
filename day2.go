@@ -18,7 +18,7 @@ func main() {
 	}
 	contents := string(bytes)
 	split := strings.Split(contents, "\n")
-	split = split[:len(split)-1]
+	//split = split[:len(split)-1]
 
 	coords := make(map[string]int)
 	coords["x"] = 0

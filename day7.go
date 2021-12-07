@@ -10,12 +10,15 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var inputFile = flag.String("inputFile", "inputs/input7.txt", "Relative file path to use as input.")
 var factVal = 1
 
 func main() {
+	start := time.Now()
+	// Code to measure
 
 	flag.Parse()
 	bytes, err := ioutil.ReadFile(*inputFile)
@@ -51,7 +54,13 @@ func main() {
 		}
 		fuel += total
 	}
-	fmt.Println(avg)
+	//fmt.Println(avg)
 	fmt.Println(medianValue)
 	fmt.Println(fuel)
+	duration := time.Since(start)
+
+	fmt.Println(duration)
+
+	// Nanoseconds as int64
+	//fmt.Println(duration.Nanoseconds())
 }

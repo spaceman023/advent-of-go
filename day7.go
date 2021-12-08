@@ -1,6 +1,6 @@
 //tried to go fast but am too stupid - will refactor this tomorrow
 
-package main
+package day7
 
 import (
 	"flag"

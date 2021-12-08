@@ -1,6 +1,6 @@
 //yay I made it back to Go
 
-package main
+package day5
 
 import (
 	"flag"

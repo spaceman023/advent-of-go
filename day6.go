@@ -1,6 +1,6 @@
 //no memory overflows here 😎
 
-package main
+package day6
 
 import (
 	"flag"

@@ -1,4 +1,4 @@
-package day1
+package main
 
 import (
 	"flag"
@@ -8,11 +8,11 @@ import (
 	"strings"
 )
 
-var inputFile = flag.String("inputFile", "inputs/input1.txt", "Relative file path to use as input.")
+var inputFile1 = flag.String("inputFile", "../inputs/input1.txt", "Relative file path to use as input.")
 
 func main() {
 	flag.Parse()
-	bytes, err := ioutil.ReadFile(*inputFile)
+	bytes, err := ioutil.ReadFile(*inputFile1)
 	if err != nil {
 		return
 	}

@@ -1,6 +1,6 @@
 //refactored!
 
-package day7
+package main
 
 import (
 	"flag"
@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-var inputFile = flag.String("inputFile", "inputs/input7.txt", "Relative file path to use as input.")
+var inputFile = flag.String("inputFile", "../inputs/input7.txt", "Relative file path to use as input.")
 
 func getMedian(positions []int) int {
 	sort.Ints(positions)

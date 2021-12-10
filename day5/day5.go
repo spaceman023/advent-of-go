@@ -1,6 +1,5 @@
 //yay I made it back to Go
-
-package day5
+package main
 
 import (
 	"flag"
@@ -10,7 +9,7 @@ import (
 	"strings"
 )
 
-var inputFile = flag.String("inputFile", "inputs/input5.txt", "Path")
+var inputFile5 = flag.String("inputFile", "../inputs/input5.txt", "Path")
 
 type coordinate struct {
 	x int
@@ -36,7 +35,7 @@ func max(a, b int) int {
 func main() {
 
 	flag.Parse()
-	bytes, err := ioutil.ReadFile(*inputFile)
+	bytes, err := ioutil.ReadFile(*inputFile5)
 	if err != nil {
 		return
 	}

@@ -1,6 +1,6 @@
 //no memory overflows here 😎
 
-package day6
+package main
 
 import (
 	"flag"
@@ -10,13 +10,13 @@ import (
 	"strings"
 )
 
-var inputFile = flag.String("inputFile", "inputs/input6.txt", "Relative file path to use as input.")
+var inputFile6 = flag.String("inputFile", "../inputs/input6.txt", "Relative file path to use as input.")
 
 func main() {
 
 	//parsing the file
 	flag.Parse()
-	bytes, err := ioutil.ReadFile(*inputFile)
+	bytes, err := ioutil.ReadFile(*inputFile6)
 	if err != nil {
 		return
 	}

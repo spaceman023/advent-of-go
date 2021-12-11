@@ -48,14 +48,10 @@ func scoringLines(s string) int {
 			if current != stack[len(stack)-1] {
 				score += scoreMap[s[i]]
 				return score
-			} else {
-				stack = remove(stack, len(stack)-1)
 			}
+			stack = remove(stack, len(stack)-1)
 		}
 	}
-	// if len(stack) > 0 {
-	// 	return false
-	// }
 	return score
 }
 func scoringLinesPartTwo(s string) []string {

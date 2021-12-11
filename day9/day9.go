@@ -66,6 +66,7 @@ func main() {
 	for _, v := range lowestPoints {
 		lowestSum += pointMap[v] + 1
 	}
+	fmt.Println(lowestSum)
 	//part two
 	var basins = []map[Point]int{}
 	for _, v := range lowestPoints {
@@ -95,6 +96,5 @@ func main() {
 	for _, v := range basins[0:3] {
 		basintotal *= len(v)
 	}
-	fmt.Println(basins[0:3])
 	fmt.Println(basintotal)
 }

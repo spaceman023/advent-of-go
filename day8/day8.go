@@ -1,5 +1,3 @@
-//refactored!
-
 package main
 
 import (
@@ -62,7 +60,7 @@ func main() {
 			}
 		}
 	}
-
+	fmt.Println(count)
 	//Part Two
 	decodedOutputs := []string{}
 	for i := range inputs {
@@ -88,30 +86,35 @@ func main() {
 			for _, x := range lenfives {
 				if computeIntersects(x, lettermap[1]) == 2 {
 					lettermap[3] = x
+					continue
 				}
 				if computeIntersects(x, lettermap[4]) == 2 {
 					lettermap[2] = x
+					continue
 				}
 				if computeIntersects(x, lettermap[4]) == 3 && computeIntersects(x, lettermap[1]) == 1 {
 					lettermap[5] = x
+					continue
 				}
 			}
 			for _, x := range lensixes {
 				if computeIntersects(x, lettermap[1]) == 1 {
 					lettermap[6] = x
+					continue
 				}
 				if computeIntersects(x, lettermap[4]) == 4 {
 					lettermap[9] = x
+					continue
 				}
 				if computeIntersects(x, lettermap[7]) == 3 && computeIntersects(x, lettermap[4]) == 3 {
 					lettermap[0] = x
+					continue
 				}
 			}
 		}
 		decoded := ""
 		for _, v := range outputs[i] {
 			v = sortStringByCharacter(v)
-			fmt.Println(v)
 
 			for key, value := range lettermap {
 				value = sortStringByCharacter(value)

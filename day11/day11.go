@@ -101,6 +101,7 @@ func main() {
 	for k, v := range pm {
 		jm[k] = v
 	}
+	//part one
 	flashes := 0
 	for i := 0; i < 100; i++ {
 		pm, flashes, _ = update(pm, flashes)

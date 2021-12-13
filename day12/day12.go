@@ -68,19 +68,5 @@ func main() {
 	lines := strings.Split(contents, "\n")
 	var g = graph{[]node{}, []edge{}}
 	fmt.Println(lines)
-	for _, v := range lines {
-		split := strings.Split(v, "-")
-		nodeA := node{split[0], []edge{}, []edge{}}
-		nodeB := node{split[1], []edge{}, []edge{}}
-		edgeA := edge{split[0] + split[1], nodeA, nodeB}
-		if !containsNode(g.nodes, nodeA) {
-			g.nodes = append(g.nodes, nodeA)
-		}
-		if !containsNode(g.nodes, nodeB) {
-			g.nodes = append(g.nodes, nodeB)
-		}
-		if !containsEdge(g.edges, edgeA) {
-			g.edges = append(g.edges, edgeA)
-		}
-	}
+
 }

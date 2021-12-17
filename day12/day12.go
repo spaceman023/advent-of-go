@@ -63,28 +63,14 @@ func main() {
 			paths = append(paths, path)
 			continue
 		}
-		dsmall := hasDoubleSmall(path)
-
 		for _, v := range caves[path[len(path)-1]] {
 			if v == "start" {
 				continue
 			}
-			if !islower(v) {
-				n := copyAndAppend(path, v)
-				queue = append(queue, n)
-			}
-
-			if islower(v) && !contains(path, v) {
-				n := copyAndAppend(path, v)
-				queue = append(queue, n)
-			}
-
-			if islower(v) && contains(path, v) && !dsmall {
-				n := copyAndAppend(path, v)
-				queue = append(queue, n)
+			if !islower(v) || islower(v) && !contains(path, v) || islower(v) && contains(path, v) && !hasDoubleSmall(path) {
+				queue = append(queue, copyAndAppend(path, v))
 			}
 		}
-
 	}
 	fmt.Println(len(paths))
 }

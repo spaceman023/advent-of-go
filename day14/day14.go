@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"strings"
@@ -26,11 +25,8 @@ func step(chain counter, polymers counter, pairs map[string]string) (counter, co
 	return newChain, newPolymers
 }
 
-var inputFile = flag.String("inputFile", "../inputs/input14.txt", "Relative file path to use as input.")
-
 func main() {
-	flag.Parse()
-	bytes, _ := ioutil.ReadFile(*inputFile)
+	bytes, _ := ioutil.ReadFile("../inputs/input14.txt")
 	parsed := strings.Split(string(bytes), "\n\n")
 	start := parsed[0]
 	lines := strings.Split(parsed[1], "\n")

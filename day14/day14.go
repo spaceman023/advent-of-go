@@ -54,7 +54,7 @@ func main() {
 	}
 
 	max := 0
-	min := 100000000000000000
+	min := int(^uint(0) >> 1)
 	for _, v := range polymers {
 		if v > max {
 			max = v

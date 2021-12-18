@@ -1,3 +1,5 @@
+//super hacky solution to this problem
+//many thanks to https://github.com/fzipp/astar for the base algorithm and data structures that I have butchered herein
 package main
 
 import (
@@ -182,7 +184,7 @@ func tile(m map[image.Point]int, oY int, oX int) map[image.Point]int {
 }
 func main() {
 	allPoints := make(map[image.Point]int)
-	bytes, _ := ioutil.ReadFile("input15.txt")
+	bytes, _ := ioutil.ReadFile("../inputs/input15.txt")
 	parsed := strings.Split(string(bytes), "\n")
 	maxX := len(parsed[0])
 	maxY := len(parsed)

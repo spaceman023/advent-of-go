@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"math"
 	"strings"
+	"time"
 )
 
 type item struct {
@@ -78,6 +79,7 @@ func (p Path) Cost(m map[image.Point]int) (c float64) {
 
 //FindPath is a method
 func FindPath(g Graph, start, dest node, d, h CostFunc, m map[image.Point]int) Path {
+
 	closed := make(map[node]bool)
 
 	pq := &priorityQueue{}
@@ -91,7 +93,6 @@ func FindPath(g Graph, start, dest node, d, h CostFunc, m map[image.Point]int) P
 			continue
 		}
 		if n == dest {
-			// Path found
 			return p
 		}
 		closed[n] = true
@@ -104,7 +105,6 @@ func FindPath(g Graph, start, dest node, d, h CostFunc, m map[image.Point]int) P
 			})
 		}
 	}
-
 	return nil
 }
 
@@ -202,21 +202,19 @@ func main() {
 			g.link(point, neighbor)
 		}
 	}
-	for i, v := range allPoints {
-		fmt.Println(i, v)
-	}
 
 	a := image.Point{0, 0}
 	d := image.Point{499, 499}
-	fmt.Println(allPoints[a], allPoints[d], len(allPoints))
+	start := time.Now()
 	p := FindPath(g, a, d, nodeDist, nodeDist, allPoints)
 	if p == nil {
 		fmt.Println("No path found.")
 		return
 	}
-	totalRisk := 0
-	for _, n := range p {
-		totalRisk += allPoints[n.(image.Point)]
-	}
-	fmt.Println(totalRisk - allPoints[image.Point{0, 0}])
+	// totalRisk := 0
+	// for _, n := range p {
+	// 	totalRisk += allPoints[n.(image.Point)]
+	// }
+	// fmt.Println(totalRisk - allPoints[image.Point{0, 0}])
+	fmt.Println(time.Since(start))
 }

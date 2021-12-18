@@ -211,10 +211,10 @@ func main() {
 		fmt.Println("No path found.")
 		return
 	}
-	// totalRisk := 0
-	// for _, n := range p {
-	// 	totalRisk += allPoints[n.(image.Point)]
-	// }
-	// fmt.Println(totalRisk - allPoints[image.Point{0, 0}])
+	totalRisk := 0
+	for _, n := range p {
+		totalRisk += allPoints[n.(image.Point)]
+	}
+	fmt.Println(totalRisk - allPoints[image.Point{0, 0}])
 	fmt.Println(time.Since(start))
 }

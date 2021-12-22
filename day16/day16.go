@@ -56,7 +56,6 @@ func parsePacket(i *int, inputString string) packet {
 		packets = append(packets, packet)
 	}
 	return packet{version, typeID, 0, packets}
-
 }
 
 func val(p packet) int {

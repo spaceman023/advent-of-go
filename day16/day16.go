@@ -6,7 +6,6 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"strconv"
 )
 
@@ -59,6 +58,7 @@ func parsePacket(i *int, inputString string) packet {
 	return packet{version, typeID, 0, packets}
 
 }
+
 func val(p packet) int {
 	switch p.typeID {
 	case 0:
@@ -109,6 +109,7 @@ func val(p packet) int {
 	}
 	return 0
 }
+
 func hexToBin(hex string) (string, error) {
 	ui, _ := strconv.ParseUint(hex, 16, 64)
 	format := fmt.Sprintf("%%0%db", len(hex)*4)
@@ -117,13 +118,9 @@ func hexToBin(hex string) (string, error) {
 
 func main() {
 	bytes, _ := ioutil.ReadFile("../inputs/input16.txt")
-	log.SetFlags(log.Lshortfile)
 	parsedBin := ""
 	for _, hex := range bytes {
-		bin, err := hexToBin(string(hex))
-		if err != nil {
-			log.Fatalln(err)
-		}
+		bin, _ := hexToBin(string(hex))
 		parsedBin += bin
 	}
 	i := 0

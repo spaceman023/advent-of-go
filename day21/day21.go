@@ -32,39 +32,54 @@ func (d *die) next() int {
 	}
 	return d.current
 }
+func weirdMod(i int) int {
+	for i > 10 {
+		i -= 10
+	}
+	return i
+}
+
+var cache = map[string][]int{}
 
 //part two types and methods
+func compute(p1 int, p1score int, p2 int, p2score int) []int {
+	wins := make([]int, 2)
+	dieRollProbs := make(map[int]int)
+	for x := 1; x <= 3; x++ {
+		for y := 1; y <= 3; y++ {
+			for z := 1; z <= 3; z++ {
+				dieRollProbs[x+y+z]++
+			}
+		}
+	}
+	for _, v := range dieRollProbs {
+		newp1 := weirdMod(p1 + v)
+		newp1score := p1score + newp1
+		if newp1score >= 21 {
+			wins[0] += v
+		} else {
+			tmpwins := []int{0, 0}
+			tmpwins = compute(
+				p2,
+				p2score,
+				newp1,
+				newp1score,
+			)
+			state1 := fmt.Sprintf("%d%d%d%d",
+				p2,
+				p2score,
+				newp1,
+				newp1score,
+			)
+			cache[state1] = tmpwins
+			wins[0] += tmpwins[1] * v
+			wins[1] += tmpwins[0] * v
+		}
 
-type game struct {
-	p1       player
-	p2       player
-	turn     bool
-	gameover bool
+	}
+	return wins
 }
 
-func (p *player) nextTurn(move int) {
-	p.space = (p.space-1+move)%10 + 1
-	p.score += p.space
-}
-func (g game) iterate(move int, counter1 *int, counter2 *int) game {
-	if g.turn {
-		g.p1.nextTurn(move)
-	} else {
-		g.p2.nextTurn(move)
-	}
-	g.turn = !g.turn
-	if g.p1.score >= 21 {
-		*counter1++
-		g.gameover = true
-		return g
-	}
-	if g.p2.score >= 21 {
-		*counter2++
-		g.gameover = true
-		return g
-	}
-	return g
-}
 func main() {
 	//part one
 	p1 := player{10, 0}
@@ -85,38 +100,7 @@ func main() {
 	}
 	fmt.Println("Part one: ", losingScore*die.total)
 	//part two
-	dieRollProbs := make(map[int]int)
-	for x := 1; x <= 3; x++ {
-		for y := 1; y <= 3; y++ {
-			for z := 1; z <= 3; z++ {
-				dieRollProbs[x+y+z]++
-			}
-		}
-	}
-	fmt.Println(dieRollProbs)
-	queue := []game{}
-	starterGame := game{
-		player{10, 0},
-		player{2, 0},
-		true,
-		false,
-	}
-	counter1 := 0
-	counter2 := 0
-	queue = append(queue, starterGame)
-	for len(queue) > 0 {
-		if queue[0].gameover {
-			queue = queue[1:]
-			continue
-		}
-		fmt.Println(len(queue), counter1, counter2)
-
-		for k, v := range dieRollProbs {
-			for i := 0; i < v; i++ {
-				queue = append(queue, queue[0].iterate(k, &counter1, &counter2))
-			}
-		}
-		queue = queue[1:]
-	}
-	fmt.Println(counter1, counter2)
+	answer := compute(4, 0, 8, 0)
+	fmt.Println(answer[0], answer[1])
+	fmt.Println(444356092776315, 341960390180808)
 }

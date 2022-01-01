@@ -1,106 +1,201 @@
+//not mine, reverse engineering one from https://github.com/Torakushi
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"log"
+	"os"
+	"regexp"
+	"strconv"
 )
 
-type player struct {
-	space int
-	score int
-}
+var (
+	boardGame                  = &board{}
+	cache                      = map[string][]int{}
+	universesCreatedByLaunches = map[int]int{}
+)
 
-//part one types and methods
-type die struct {
-	current int
-	total   int
-}
-
-func (p *player) turn(d *die) {
-	totalMove := 0
-	for i := 0; i < 3; i++ {
-		totalMove += d.next()
+func main() {
+	fmt.Println("DAY21")
+	if err := process(); err != nil {
+		log.Fatal(err)
 	}
-	p.space = (p.space-1+totalMove)%10 + 1
-	p.score += p.space
+	fmt.Println()
 }
 
-func (d *die) next() int {
-	d.current++
-	d.total++
-	if d.current > 100 {
-		d.current = d.current % 100
+func process() error {
+	// First Part
+	initBoardGame(&detDice{})
+	fmt.Printf("Part one, the loosing score * rolls number: %d\n\n", boardGame.detPlay())
+
+	// Second Part
+	initBoardGame(nil)
+	getUniversesCreateByLaunches()
+	r := boardGame.quanticPlay()
+	max, index := r[0], 1
+	if r[1] > max {
+		max = r[1]
+		index = 2
 	}
-	return d.current
+
+	fmt.Printf("Player1 wins on %d universe and Player2 wins on %d ... CONGRATZ Player%d, you win more !\n",
+		r[0], r[1], index)
+	return nil
 }
-func weirdMod(i int) int {
-	for i > 10 {
-		i -= 10
+
+func readDatas() error {
+	boardGame = &board{}
+	file, err := os.Open("../inputs/input21.txt")
+	if err != nil {
+		return fmt.Errorf("error while opening file: %s", err)
 	}
-	return i
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	re := regexp.MustCompile(`Player (\d+) starting position: (\d+)`)
+	p := []*player{}
+	for scanner.Scan() {
+		s := re.FindAllStringSubmatch(scanner.Text(), -1)[0]
+		index, _ := strconv.Atoi(s[1])
+		position, _ := strconv.Atoi(s[2])
+		p = append(p, &player{
+			index:    index,
+			position: position,
+		})
+	}
+	boardGame.players = p
+	return nil
 }
 
-var cache = map[string][]int{}
+type board struct {
+	dice    *detDice
+	players []*player
+	turn    int
+}
 
-//part two types and methods
-func compute(p1 int, p1score int, p2 int, p2score int) []int {
-	wins := make([]int, 2)
-	dieRollProbs := make(map[int]int)
-	for x := 1; x <= 3; x++ {
-		for y := 1; y <= 3; y++ {
-			for z := 1; z <= 3; z++ {
-				dieRollProbs[x+y+z]++
+func (b *board) detPlay() int {
+	winnerIndex := 0
+L:
+	for {
+		for _, player := range b.players {
+			score := b.dice.rolls(3)
+			player.updateScoreAndPosition(score)
+			if player.score >= 1000 {
+				fmt.Printf("Player %d Win with score: %d!\n", player.index, player.score)
+				winnerIndex = player.index - 1
+				break L
 			}
 		}
 	}
-	for _, v := range dieRollProbs {
-		newp1 := weirdMod(p1 + v)
-		newp1score := p1score + newp1
-		if newp1score >= 21 {
-			wins[0] += v
-		} else {
-			tmpwins := []int{0, 0}
-			tmpwins = compute(
-				p2,
-				p2score,
-				newp1,
-				newp1score,
-			)
-			state1 := fmt.Sprintf("%d%d%d%d",
-				p2,
-				p2score,
-				newp1,
-				newp1score,
-			)
-			cache[state1] = tmpwins
-			wins[0] += tmpwins[1] * v
-			wins[1] += tmpwins[0] * v
-		}
+	return b.players[(winnerIndex+1)%2].score * b.dice.rollCount
+}
 
+func (b *board) quanticPlay() []int {
+	wins := make([]int, 2)
+	for k, v := range universesCreatedByLaunches {
+		oB := b.Copy()
+		oB.players[b.turn-1].updateScoreAndPosition(k)
+		if oB.players[b.turn-1].score >= 21 {
+			wins[b.turn-1] += v
+		} else {
+			oB.turn = b.turn + 1
+			if oB.turn > 2 {
+				oB.turn = 1
+			}
+			//
+			r, ok := cache[oB.getState()]
+			if !ok {
+				r = oB.quanticPlay()
+				cache[oB.getState()] = r
+			}
+
+			wins[0] += v * r[0]
+			wins[1] += v * r[1]
+		}
 	}
 	return wins
 }
 
-func main() {
-	//part one
-	p1 := player{10, 0}
-	p2 := player{2, 0}
-	die := die{0, 0}
-	losingScore := 0
-	for {
-		p1.turn(&die)
-		if p1.score >= 1000 {
-			losingScore = p2.score
-			break
+type player struct {
+	index    int
+	position int
+	score    int
+}
+
+func (p *player) updateScoreAndPosition(r int) {
+	newP := p.position + r
+	if newP%10 == 0 {
+		p.position = 10
+	} else {
+		p.position = newP % 10
+	}
+	p.score += p.position
+}
+
+type detDice struct {
+	current   int
+	rollCount int
+}
+
+func (d *detDice) rolls(l int) int {
+	sum := 0
+	for i := 1; i <= l; i++ {
+		d.current++
+		d.rollCount++
+		if d.current == 101 {
+			d.current = 1
 		}
-		p2.turn(&die)
-		if p2.score >= 1000 {
-			losingScore = p1.score
-			break
+		sum += d.current
+	}
+	return sum
+}
+
+func initBoardGame(d *detDice) error {
+	if err := readDatas(); err != nil {
+		return err
+	}
+	boardGame.dice = d
+	boardGame.turn = 1
+	return nil
+}
+
+func (b *board) getState() string {
+	return fmt.Sprintf("T%d-po%d-pt%d-so%d-st%d",
+		b.turn,
+		b.players[0].position,
+		b.players[1].position,
+		b.players[0].score,
+		b.players[1].score,
+	)
+}
+
+func (b *board) Copy() *board {
+	return &board{
+		turn: b.turn,
+		dice: b.dice,
+		players: []*player{
+			{
+				position: b.players[0].position,
+				score:    b.players[0].score,
+				index:    b.players[0].index,
+			},
+			{
+				position: b.players[1].position,
+				score:    b.players[1].score,
+				index:    b.players[1].index,
+			},
+		},
+	}
+}
+
+func getUniversesCreateByLaunches() {
+	universesCreatedByLaunches = map[int]int{}
+	for i := 1; i <= 3; i++ {
+		for j := 1; j <= 3; j++ {
+			for k := 1; k <= 3; k++ {
+				universesCreatedByLaunches[i+k+j]++
+			}
 		}
 	}
-	fmt.Println("Part one: ", losingScore*die.total)
-	//part two
-	answer := compute(4, 0, 8, 0)
-	fmt.Println(answer[0], answer[1])
-	fmt.Println(444356092776315, 341960390180808)
 }
